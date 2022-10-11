@@ -34,6 +34,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -55,8 +59,11 @@ public interface IPackets {
   PacketContainerSendable metadataPacket(int entityID, String nameTag, Player player,
       Placeholders placeholders, boolean setInvisible, boolean setSmall);
 
+  PacketContainerSendable metadataPacket(int entityID, Component nameTag, Player player,
+      Placeholders placeholders, boolean setInvisible, boolean setSmall);
+
   default PacketContainerSendable metadataPacket(int entityID) {
-    return metadataPacket(entityID, null, null, null, true, true);
+    return metadataPacket(entityID, (String) null, null, null, true, true);
   }
 
   PacketContainerSendable teleportPacket(int entityID, Location location);
@@ -123,6 +130,26 @@ public interface IPackets {
       }
       if (placeholders != null) {
         watcher.setObject(2, placeholders.parse(nameTag, player));
+        watcher.setObject(3, (byte) 1);
+      }
+      if (setSmall) {
+        watcher.setObject(15, (byte) 0x01);
+      }
+      packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+      return packet;
+    }
+
+    @Override
+    public PacketContainerSendable metadataPacket(int entityID, Component nameTag, Player player,
+                                                  Placeholders placeholders, boolean setInvisible, boolean setSmall) {
+      PacketContainerSendable packet = newPacket(PacketType.Play.Server.ENTITY_METADATA);
+      packet.getIntegers().write(0, entityID);
+      WrappedDataWatcher watcher = new WrappedDataWatcher();
+      if (setInvisible) {
+        watcher.setObject(0, (byte) 0x20);
+      }
+      if (placeholders != null) {
+        watcher.setObject(2, LegacyComponentSerializer.legacySection().serialize(placeholders.parse(nameTag, player)));
         watcher.setObject(3, (byte) 1);
       }
       if (setSmall) {
@@ -237,6 +264,37 @@ public interface IPackets {
       if (setSmall) {
         WrappedDataWatcher.WrappedDataWatcherObject small = new WrappedDataWatcher.WrappedDataWatcherObject(
             15, WrappedDataWatcher.Registry.get(Byte.class));
+        watcher.setObject(small, (byte) 0x01);
+
+      }
+      packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+      return packet;
+    }
+
+    @Override
+    public PacketContainerSendable metadataPacket(int entityID, Component nameTag, Player player,
+                                                  Placeholders placeholders, boolean setInvisible, boolean setSmall) {
+      PacketContainerSendable packet = newPacket(PacketType.Play.Server.ENTITY_METADATA);
+      packet.getIntegers().write(0, entityID);
+      WrappedDataWatcher watcher = new WrappedDataWatcher();
+      if (setInvisible) {
+        WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(
+                0, WrappedDataWatcher.Registry.get(Byte.class));
+        watcher.setObject(visible, (byte) 0x20);
+      }
+      if (placeholders != null) {
+        Optional<?> opt = Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(
+                placeholders.parse(nameTag, player))).getHandle());
+        watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2,
+                WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
+
+        WrappedDataWatcher.WrappedDataWatcherObject nameVisible = new WrappedDataWatcher.WrappedDataWatcherObject(
+                3, WrappedDataWatcher.Registry.get(Boolean.class));
+        watcher.setObject(nameVisible, true);
+      }
+      if (setSmall) {
+        WrappedDataWatcher.WrappedDataWatcherObject small = new WrappedDataWatcher.WrappedDataWatcherObject(
+                15, WrappedDataWatcher.Registry.get(Byte.class));
         watcher.setObject(small, (byte) 0x01);
 
       }

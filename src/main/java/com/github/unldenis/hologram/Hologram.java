@@ -24,14 +24,7 @@ import com.github.unldenis.hologram.event.PlayerHologramShowEvent;
 import com.github.unldenis.hologram.line.ItemLine;
 import com.github.unldenis.hologram.placeholder.Placeholders;
 import com.github.unldenis.hologram.util.Validate;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.function.Function;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -42,7 +35,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Function;
+
 public class Hologram {
+
+  private static final Class<Component> COMPONENT_CLASS;
+
+  static {
+    Class<Component> clazz;
+    try {
+      clazz = Component.class;
+    } catch (NoClassDefFoundError e) {
+      clazz = null;
+    }
+    COMPONENT_CLASS = clazz;
+  }
 
   protected final List<AbstractLine<?>> lines;
   protected final Set<Player> seeingPlayers = new CopyOnWriteArraySet<>();
@@ -87,6 +97,11 @@ public class Hologram {
         ItemLine tempLine = new ItemLine(this, (ItemStack) val);
         tempLine.setLocation(cloned.add(0.0, 0.60D, 0).clone());
         tempReversed.addFirst(tempLine);
+      } else if (COMPONENT_CLASS != null && COMPONENT_CLASS.isInstance(val)) {
+        // class ^^^^^^^^^^^^^^^ may not be present on runtime, so we can't use instanceof
+        ComponentLine tempLine = new ComponentLine(this, (Component) val, (boolean) line[1]);
+        tempLine.setLocation(cloned.add(0.0, up, 0).clone());
+        tempReversed.addFirst(tempLine);
       }
     }
     this.lines = Collections.unmodifiableList(tempReversed);
@@ -113,7 +128,7 @@ public class Hologram {
     // Obtain the Y position of the first line and then calculate the distance to all lines to maintain this distance
     double baseY = firstLine.getLocation().getY();
     // Get position Y where to teleport the first line
-    double destY = (this.location.getY() - 0.28D) + (firstLine instanceof TextLine ? 0.28D : 0.60D);
+    double destY = (this.location.getY() - 0.28D) + (firstLine instanceof TextLine || firstLine instanceof ComponentLine ? 0.28D : 0.60D);
     // Teleport the first line
     this.teleportLine(destY, firstLine);
     AbstractLine<?> tempLine;

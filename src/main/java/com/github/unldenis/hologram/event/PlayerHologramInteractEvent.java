@@ -19,8 +19,8 @@
 
 package com.github.unldenis.hologram.event;
 
+import com.github.unldenis.hologram.AbstractLine;
 import com.github.unldenis.hologram.Hologram;
-import com.github.unldenis.hologram.TextLine;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +28,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @since 1.2.7-SNAPSHOT
  */
-public class PlayerHologramInteractEvent extends PlayerHologramEvent {
+public class PlayerHologramInteractEvent<T, L extends AbstractLine<T>> extends PlayerHologramEvent {
 
   private static final HandlerList HANDLERS = new HandlerList();
 
-  private final TextLine line;
+  private final L line;
 
   public PlayerHologramInteractEvent(
       @NotNull Player player,
       @NotNull Hologram hologram,
-      @NotNull TextLine line
+      @NotNull L line
   ) {
     super(player, hologram);
     this.line = line;
@@ -48,7 +48,7 @@ public class PlayerHologramInteractEvent extends PlayerHologramEvent {
   }
 
   @NotNull
-  public TextLine getLine() {
+  public L getLine() {
     return line;
   }
 

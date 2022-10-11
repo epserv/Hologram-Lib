@@ -23,6 +23,9 @@ import com.github.unldenis.hologram.util.Validate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +44,18 @@ public class Placeholders {
     String c = line;
     for (Map.Entry<String, Function<Player, String>> entry : placeholders.entrySet()) {
       c = c.replaceAll(entry.getKey(), entry.getValue().apply(player));
+    }
+    return c;
+  }
+
+  @NotNull
+  public Component parse(@NotNull Component line, @NotNull Player player) {
+    Component c = line;
+    for (Map.Entry<String, Function<Player, String>> entry : placeholders.entrySet()) {
+      c = c.replaceText(TextReplacementConfig.builder()
+              .match(entry.getKey())
+              .replacement(entry.getValue().apply(player))
+              .build());
     }
     return c;
   }
