@@ -51,7 +51,7 @@ public class ComponentLine extends AbstractLine<Component> {
   }
 
   @Override
-  protected void update(@NotNull Player player) {
+  public void update(@NotNull Player player) {
     byte spawnBefore = (byte) ((isEmpty ? 1 : 0) | (isEmpty(obj) ? 1 : 0) << 1);
     /*
       0x00  = is already showed

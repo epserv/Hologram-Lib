@@ -23,8 +23,6 @@ import com.github.unldenis.hologram.animation.Animation;
 import com.github.unldenis.hologram.packet.PacketContainerSendable;
 import com.github.unldenis.hologram.packet.PacketsFactory;
 import com.github.unldenis.hologram.util.Validate;
-import java.util.Objects;
-import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -32,6 +30,9 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public abstract class AbstractLine<T> {
 
@@ -75,7 +76,7 @@ public abstract class AbstractLine<T> {
         .send(player);
   }
 
-  protected abstract void update(@NotNull Player player);
+  public abstract void update(@NotNull Player player);
 
   @NotNull
   @Unmodifiable

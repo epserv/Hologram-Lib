@@ -48,7 +48,7 @@ public class TextLine extends AbstractLine<String> {
   }
 
   @Override
-  protected void update(@NotNull Player player) {
+  public void update(@NotNull Player player) {
     byte spawnBefore = (byte) ((isEmpty ? 1 : 0) | (obj.isEmpty() ? 1 : 0) << 1);
     /*
       0x00  = is already showed

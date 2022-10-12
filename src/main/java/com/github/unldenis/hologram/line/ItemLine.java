@@ -45,7 +45,7 @@ public class ItemLine extends AbstractLine<ItemStack> {
   }
 
   @Override
-  protected void update(@NotNull Player player) {
+  public void update(@NotNull Player player) {
     PacketsFactory.get()
         .equipmentPacket(entityID, obj)
         .send(player);
