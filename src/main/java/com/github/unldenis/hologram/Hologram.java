@@ -62,10 +62,10 @@ public class Hologram {
   private Location location;
 
   /**
-   * @param plugin       The org.bukkit.Plugin
-   * @param location     The location of the hologram
+   * @param plugin The org.bukkit.Plugin
+   * @param location The location of the hologram
    * @param placeholders Reference passage of placeholders
-   * @param lineArrays   Inverted array of hologram lines
+   * @param lineArrays Inverted array of hologram lines
    * @deprecated Deprecated because you have to use the Builder of the class.
    */
   @Deprecated
