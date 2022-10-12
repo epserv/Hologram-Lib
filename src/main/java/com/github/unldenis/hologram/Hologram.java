@@ -65,7 +65,7 @@ public class Hologram {
    * @param plugin       The org.bukkit.Plugin
    * @param location     The location of the hologram
    * @param placeholders Reference passage of placeholders
-   * @param l            Inverted array of hologram lines
+   * @param lineArrays   Inverted array of hologram lines
    * @deprecated Deprecated because you have to use the Builder of the class.
    */
   @Deprecated
@@ -74,7 +74,7 @@ public class Hologram {
       @NotNull Plugin plugin,
       @NotNull Location location,
       @Nullable Placeholders placeholders,
-      @NotNull Object[]... l
+      @NotNull Object[][] lineArrays
   ) {
     this.plugin = plugin;
     this.location = location;
@@ -82,10 +82,10 @@ public class Hologram {
 
     LinkedList<AbstractLine<?>> tempReversed = new LinkedList<>();
     Location cloned = this.location.clone().subtract(0, 0.28, 0);
-    for (int j = 0; j < l.length; j++) {
-      Object[] line = l[j];
+    for (int j = 0; j < lineArrays.length; j++) {
+      Object[] line = lineArrays[j];
       double up = 0.28D;
-      if (j > 0 && l[j - 1].length == 1 /* ItemStack */) {
+      if (j > 0 && lineArrays[j - 1].length == 1 /* ItemStack */) {
         up = 0.0D;
       }
       Object val = line[0];
