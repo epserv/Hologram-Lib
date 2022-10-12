@@ -122,6 +122,7 @@ public class Hologram {
   @ApiStatus.AvailableSince("1.2-SNAPSHOT")
   public void teleport(@NotNull Location to) {
     Validate.notNull(to, "Destination cannot be null");
+    if (this.lines.isEmpty()) return;
     AbstractLine<?> firstLine = this.lines.get(0);
     // Clone the given location
     this.location = to.clone();
